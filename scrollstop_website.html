@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScrollStop — Fake News & Deepfakes | Projektarbeit 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cr:#f4efe6;--cr2:#ece6d8;--cr3:#e3dccf;
+  --ink:#1a1614;
+  --red:#c5220d;--red2:#e02b14;
+  --gold:#b8870b;--gold2:#d4a417;
+  --teal:#0d6b5c;--teal2:#128f74;
+  --mut:rgba(26,22,20,.46);--mut2:rgba(26,22,20,.2);
+  --fd:"Playfair Display",serif;
+  --fb:"DM Sans",sans-serif;
+  --fm:"DM Mono",monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--cr);color:var(--ink);font-family:var(--fb);overflow-x:hidden;cursor:none;}
+#cu{position:fixed;width:10px;height:10px;background:var(--red);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:multiply;transition:width .15s,height .15s,background .15s;}
+#cu2{position:fixed;width:28px;height:28px;border:1.5px solid var(--ink);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:all .1s ease-out;}
+body.hv #cu{width:16px;height:16px;background:var(--gold2);}
+body.hv #cu2{width:42px;height:42px;border-color:var(--gold2);}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:.85rem 3.5rem;background:rgba(244,239,230,.93);backdrop-filter:blur(16px);border-bottom:1px solid var(--mut2);display:flex;align-items:center;justify-content:space-between;}
+.logo{font-family:var(--fd);font-weight:900;font-size:1.15rem;letter-spacing:-.5px;}
+.logo b{color:var(--red);}
+.nul{list-style:none;display:flex;gap:2rem;}
+.nul a{font-size:.67rem;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--mut);text-decoration:none;transition:color .2s;}
+.nul a:hover{color:var(--ink);}
+.ntag{font-family:var(--fm);font-size:.58rem;color:var(--mut);letter-spacing:1px;}
+#hero{min-height:100vh;padding:7rem 3.5rem 4rem;display:grid;grid-template-columns:1fr 360px;gap:4rem;align-items:center;position:relative;overflow:hidden;}
+.hbg{position:absolute;right:-2rem;top:50%;transform:translateY(-50%);font-family:var(--fd);font-weight:900;font-size:clamp(11rem,22vw,24rem);color:rgba(26,22,20,.035);line-height:1;pointer-events:none;letter-spacing:-8px;user-select:none;}
+.htag{display:inline-flex;align-items:center;gap:.6rem;font-family:var(--fm);font-size:.6rem;letter-spacing:3px;text-transform:uppercase;color:var(--red);border:1px solid rgba(197,34,13,.3);padding:.3rem .85rem;margin-bottom:2rem;animation:fu .7s ease both;}
+.htag::before{content:"▸";}
+h1{font-family:var(--fd);font-weight:900;font-size:clamp(3rem,7vw,7.5rem);line-height:.9;letter-spacing:-3px;animation:fu .7s .2s ease both;}
+h1 em{color:var(--red);font-style:italic;}
+h1 .out{color:transparent;-webkit-text-stroke:1.5px var(--ink);}
+.hlead{margin-top:1.8rem;max-width:520px;font-size:1.03rem;line-height:1.77;color:var(--mut);animation:fu .7s .4s ease both;}
+.hlead strong{color:var(--ink);}
+.hbtns{margin-top:2.5rem;display:flex;gap:1rem;flex-wrap:wrap;animation:fu .7s .6s ease both;}
+.bfill{background:var(--red);color:#fff;font-family:var(--fb);font-weight:600;font-size:.76rem;letter-spacing:1.5px;text-transform:uppercase;padding:.85rem 2rem;border:none;text-decoration:none;display:inline-flex;align-items:center;gap:.5rem;transition:all .2s;cursor:none;}
+.bfill:hover{background:var(--ink);transform:translateY(-2px);}
+.bghost{background:transparent;color:var(--ink);font-family:var(--fb);font-weight:500;font-size:.76rem;letter-spacing:1.5px;text-transform:uppercase;padding:.85rem 2rem;border:1.5px solid var(--mut2);text-decoration:none;display:inline-flex;align-items:center;gap:.5rem;transition:all .2s;cursor:none;}
+.bghost:hover{border-color:var(--ink);}
+.hstats{display:flex;flex-direction:column;gap:1px;background:var(--mut2);border:1px solid var(--mut2);animation:fu .7s .5s ease both;}
+.hst{background:var(--ink);color:var(--cr);padding:1.6rem 1.85rem;transition:background .2s;}
+.hst:hover{background:#2d2926;}
+.hst .hn{font-family:var(--fd);font-weight:900;font-size:2.7rem;line-height:1;color:var(--gold2);display:block;}
+.hst .hl{font-size:.73rem;line-height:1.55;color:rgba(244,239,230,.5);margin-top:.35rem;display:block;}
+.hst .hs{font-family:var(--fm);font-size:.53rem;color:rgba(244,239,230,.27);margin-top:.4rem;display:block;letter-spacing:1px;}
+@keyframes fu{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:translateY(0);}}
+.tape{background:var(--red);overflow:hidden;padding:.7rem 0;}
+.tapet{display:inline-flex;white-space:nowrap;animation:tA 32s linear infinite;}
+.tapei{font-family:var(--fm);font-size:.63rem;color:rgba(255,255,255,.72);letter-spacing:2px;text-transform:uppercase;padding:0 2.5rem;}
+.tapei::after{content:"◆";margin-left:2.5rem;color:rgba(255,255,255,.35);}
+@keyframes tA{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+.sec{padding:7.5rem 3.5rem;}
+.si{max-width:1180px;margin:0 auto;}
+.sec.dk{background:var(--ink);color:var(--cr);}
+.sec.md{background:var(--cr2);}
+.sn{font-family:var(--fm);font-size:.6rem;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin-bottom:.8rem;}
+.sec.dk .sn{color:var(--gold2);}
+h2{font-family:var(--fd);font-weight:900;font-size:clamp(2.2rem,5vw,5rem);line-height:.92;letter-spacing:-2px;margin-bottom:1.4rem;}
+.sl{font-size:1rem;line-height:1.77;color:var(--mut);max-width:580px;margin-bottom:3.5rem;}
+.sec.dk .sl{color:rgba(244,239,230,.5);}
+.rv{opacity:0;transform:translateY(36px);transition:opacity .75s ease,transform .75s ease;}
+.rv.on{opacity:1;transform:translateY(0);}
+.rv.d1{transition-delay:.1s;}.rv.d2{transition-delay:.2s;}.rv.d3{transition-delay:.3s;}
+.pg{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--mut2);border:1.5px solid var(--mut2);}
+.pc{background:var(--cr);padding:2.7rem 2.1rem;position:relative;overflow:hidden;transition:background .25s;}
+.pc:hover{background:var(--cr2);}
+.pc::after{content:"";position:absolute;bottom:0;left:0;right:0;height:3px;transform:scaleX(0);transform-origin:left;transition:transform .4s;}
+.pc:nth-child(1)::after{background:var(--red);}
+.pc:nth-child(2)::after{background:var(--gold);}
+.pc:nth-child(3)::after{background:var(--teal);}
+.pc:hover::after{transform:scaleX(1);}
+.pcn{font-family:var(--fm);font-size:.57rem;color:var(--mut);margin-bottom:1.8rem;letter-spacing:2px;}
+.pc h3{font-family:var(--fd);font-weight:700;font-size:1.4rem;margin-bottom:1rem;line-height:1.2;}
+.pc p{font-size:.9rem;line-height:1.75;color:var(--mut);}
+.pcf{margin-top:1.8rem;padding:.85rem 1rem;background:var(--ink);color:var(--cr);font-family:var(--fm);font-size:.67rem;line-height:1.55;}
+.bl2{display:flex;flex-direction:column;gap:.72rem;}
+.br2{display:flex;align-items:center;gap:.8rem;}
+.brl{font-family:var(--fm);font-size:.58rem;color:var(--mut);width:88px;flex-shrink:0;text-align:right;}
+.brb{flex:1;height:20px;overflow:hidden;}
+.blt{background:rgba(26,22,20,.08);}
+.bdk{background:rgba(244,239,230,.06);}
+.brf{height:100%;width:0;transition:width 1.6s cubic-bezier(.16,1,.3,1);display:flex;align-items:center;justify-content:flex-end;padding-right:5px;}
+.brf span{font-family:var(--fm);font-size:.57rem;font-weight:700;color:#000;}
+.br{background:var(--red);}.bg2{background:var(--gold2);}.bt{background:var(--teal2);}.bb2{background:#3d6fb5;}.bp{background:#9055a2;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;}
+.cc{padding:1.9rem;border:1.5px solid var(--mut2);background:var(--cr2);}
+.cc h4{font-weight:700;font-size:.94rem;margin-bottom:.3rem;}
+.cc .sub{font-family:var(--fm);font-size:.57rem;color:var(--mut);margin-bottom:1.7rem;letter-spacing:1px;}
+.drow{display:flex;align-items:center;gap:1.8rem;}
+.dleg{display:flex;flex-direction:column;gap:.5rem;flex:1;}
+.dli{display:flex;align-items:center;gap:.55rem;font-size:.74rem;color:var(--mut);}
+.dld{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.ig{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem;}
+.ic{border:1.5px solid var(--mut2);overflow:hidden;background:var(--cr2);}
+.ic.kc{border-color:var(--teal);border-width:2px;}
+.ic.ew{border-color:var(--red);border-width:2px;}
+.iph{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:2.2rem;position:relative;}
+.ip1{background:linear-gradient(135deg,#2d5a27,#4a8c3f);}
+.ip2{background:linear-gradient(135deg,#7a3e10,#c8620e);}
+.ip3{background:linear-gradient(135deg,#2c3e50,#4a627a);}
+.ip4{background:linear-gradient(135deg,#1a5276,#2471a3);}
+.ip5{background:linear-gradient(135deg,#1c1c1c,#3d3d3d);}
+.ip6{background:linear-gradient(135deg,#1a472a,#27a35a);}
+.ip7{background:linear-gradient(135deg,#2c1a1a,#8b0000);}
+.ip8{background:linear-gradient(135deg,#0d3349,#1a6990);}
+.ibadge{position:absolute;top:7px;right:7px;font-family:var(--fm);font-size:.5rem;padding:2px 6px;font-weight:700;letter-spacing:1px;}
+.ib-ki{background:var(--red);color:#fff;}
+.ib-echt{background:var(--teal);color:#fff;}
+.ifoot{padding:.6rem .75rem;background:var(--cr);}
+.iname{font-family:var(--fm);font-size:.57rem;color:var(--mut);margin-bottom:.3rem;}
+.ibw{height:16px;background:var(--cr2);overflow:hidden;}
+.ibf{height:100%;width:0;transition:width 1.6s cubic-bezier(.16,1,.3,1);display:flex;align-items:center;justify-content:flex-end;padding-right:4px;}
+.ibf span{font-family:var(--fm);font-size:.5rem;font-weight:700;color:#000;}
+.ipct{font-family:var(--fm);font-size:.54rem;color:var(--mut);margin-top:.2rem;}
+.qw{max-width:700px;margin:3rem auto 0;}
+.qprog{display:flex;gap:5px;margin-bottom:2.5rem;}
+.qpip{flex:1;height:3px;background:var(--mut2);transition:background .4s;}
+.qpip.done{background:var(--teal);}
+.qpip.active{background:var(--red);}
+.qsl{display:none;animation:fu .35s ease;}
+.qsl.show{display:block;}
+.qvis{border:1.5px solid var(--mut2);overflow:hidden;margin-bottom:1.8rem;position:relative;}
+.qimg{width:100%;height:250px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.fa{background:radial-gradient(ellipse 88px 112px at 50% 42%,#d4a880,#a87858 42%,#785040 65%,transparent 77%),radial-gradient(circle at 38% 38%,rgba(0,0,0,.7),transparent 6%),radial-gradient(circle at 62% 38%,rgba(0,0,0,.7),transparent 6%),radial-gradient(circle at 50% 8%,#6a3820,transparent 38%),var(--cr2);}
+.fb2{background:radial-gradient(ellipse 86px 110px at 52% 41%,#e0c0a0,#b89070 40%,#886050 63%,transparent 75%),radial-gradient(circle at 37% 37%,rgba(0,0,0,.65),transparent 6%),radial-gradient(circle at 67% 37%,rgba(0,0,0,.65),transparent 6%),radial-gradient(circle at 52% 8%,#705030,transparent 36%),var(--cr3);}
+.qnews{background:var(--cr2);flex-direction:column;align-items:flex-start;padding:2.5rem;gap:.6rem;justify-content:center;}
+.qns{font-family:var(--fm);font-size:.6rem;letter-spacing:2px;color:var(--red);font-weight:700;}
+.qnh{font-family:var(--fd);font-weight:700;font-size:1.2rem;line-height:1.25;}
+.qnb{font-size:.8rem;line-height:1.55;color:var(--mut);}
+.qibar{position:absolute;bottom:0;left:0;right:0;padding:.45rem 1rem;background:rgba(26,22,20,.72);display:flex;justify-content:space-between;font-family:var(--fm);font-size:.57rem;color:rgba(244,239,230,.5);letter-spacing:1px;}
+.qq{font-size:1.03rem;line-height:1.6;margin-bottom:1.5rem;font-weight:600;}
+.qopts{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;}
+.qopt{padding:1.1rem 1.3rem;background:var(--cr2);border:1.5px solid var(--mut2);color:var(--ink);font-family:var(--fb);font-size:.87rem;font-weight:500;cursor:none;text-align:left;display:flex;align-items:center;gap:.7rem;transition:all .2s;}
+.qopt:hover:not(:disabled){border-color:rgba(197,34,13,.4);background:var(--cr3);}
+.qopt:disabled{cursor:default;}
+.qopt.ri{border-color:var(--teal);background:rgba(13,107,92,.08);color:var(--teal);}
+.qopt.wr{border-color:var(--red);background:rgba(197,34,13,.07);color:var(--red);}
+.qfb{display:none;margin-top:1.3rem;padding:1.3rem;background:rgba(197,34,13,.06);border-left:3px solid var(--red);}
+.qfb.show{display:block;animation:fu .3s ease;}
+.qfb.ok{background:rgba(13,107,92,.06);border-color:var(--teal);}
+.qfb h4{font-weight:700;font-size:.94rem;margin-bottom:.45rem;}
+.qfb p{font-size:.84rem;line-height:1.65;color:var(--mut);}
+.qnr{margin-top:1.4rem;text-align:right;}
+#qend{display:none;border:1.5px solid var(--mut2);background:var(--cr2);overflow:hidden;}
+.qetop{background:var(--ink);padding:2.5rem;text-align:center;}
+.qen{font-family:var(--fd);font-weight:900;font-size:7rem;line-height:1;color:var(--gold2);}
+.qeof{font-family:var(--fm);font-size:.78rem;color:rgba(244,239,230,.35);margin-top:.3rem;}
+.qebr{background:var(--cr2);padding:2.2rem;text-align:center;}
+.qemsg{font-family:var(--fd);font-style:italic;font-size:1.25rem;line-height:1.4;color:var(--ink);max-width:440px;margin:0 auto 1.8rem;}
+.qecmp{display:inline-block;font-family:var(--fm);font-size:.63rem;color:var(--mut);border:1px solid var(--mut2);padding:.5rem 1rem;background:var(--cr3);}
+.tr{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--mut2);border:1.5px solid var(--mut2);margin-top:3.5rem;}
+.ti{background:var(--cr);padding:2.3rem 1.7rem;transition:background .2s;}
+.ti:hover{background:var(--cr2);}
+.tin{font-family:var(--fm);font-size:.57rem;color:var(--mut);margin-bottom:1.3rem;letter-spacing:2px;}
+.tem{font-size:1.8rem;display:block;margin-bottom:1rem;}
+.ti h4{font-weight:700;font-size:.9rem;margin-bottom:.6rem;line-height:1.3;}
+.ti p{font-size:.81rem;line-height:1.65;color:var(--mut);}
+.tl2{display:inline-block;margin-top:.85rem;font-family:var(--fm);font-size:.6rem;color:var(--teal);text-decoration:none;border-bottom:1px solid var(--teal);padding-bottom:1px;}
+footer{background:var(--ink);color:var(--cr);padding:3rem 3.5rem;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:2rem;}
+.flogo{font-family:var(--fd);font-weight:900;font-size:1.7rem;letter-spacing:-1px;}
+.flogo b{color:var(--red);}
+footer p{font-family:var(--fm);font-size:.58rem;color:rgba(244,239,230,.28);line-height:1.8;max-width:460px;}
+@keyframes scFd{0%,8%{transform:translateY(0);}40%,50%{transform:translateY(-33.33%);}82%,100%{transform:translateY(-66.66%);}}
+@keyframes scLn{0%{top:0;opacity:0;}5%{opacity:.9;}95%{opacity:.9;}100%{top:100%;opacity:0;}}
+@keyframes bps{0%,100%{opacity:.9;transform:scale(1);}50%{opacity:.2;transform:scale(1.5);}}
+@keyframes blnk{50%{opacity:0;}}
+@media(max-width:900px){
+  nav{padding:.9rem 1.5rem;}.nul{display:none;}
+  #hero{grid-template-columns:1fr;padding:7rem 1.5rem 3rem;gap:2rem;}.hbg{display:none;}
+  .hstats{display:grid;grid-template-columns:1fr 1fr;}
+  .sec{padding:5rem 1.5rem;}
+  .pg,.g2,.g3,.ig{grid-template-columns:1fr 1fr;}
+  .tr{grid-template-columns:1fr 1fr;}
+  .qopts{grid-template-columns:1fr;}
+  footer{flex-direction:column;}
+}
+@media(max-width:540px){.pg,.ig,.g3{grid-template-columns:1fr;}.tr{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div id="cu"></div><div id="cu2"></div>
+
+<nav>
+  <div class="logo">Scroll<b>Stop</b></div>
+  <ul class="nul">
+    <li><a href="#problem">Problem</a></li>
+    <li><a href="#social">Social Media</a></li>
+    <li><a href="#deepfakes">Deepfakes</a></li>
+    <li><a href="#psyche">Psychologie</a></li>
+    <li><a href="#umfrage">Umfrage</a></li>
+    <li><a href="#quiz">Quiz</a></li>
+    <li><a href="#tipps">Tipps</a></li>
+  </ul>
+  <div class="ntag">Informatik &amp; Gesellschaft &middot; Projektarbeit 2026</div>
+</nav>
+
+<section id="hero">
+  <div class="hbg" aria-hidden="true">FAKE</div>
+  <div style="position:relative;z-index:1;">
+    <div class="htag">Informatik trifft Gesellschaft &middot; Projektarbeit 2026</div>
+    <h1>Wie formen<br><em>soziale</em><br><span class="out">Medien</span><br>deine Meinung?</h1>
+    <p class="hlead">Algorithmen, Echokammern und <strong>Deepfakes</strong> ver&auml;ndern t&auml;glich unsere Wahrnehmung der Realit&auml;t &mdash; meistens ohne dass wir es merken. Eine Forschungsarbeit &uuml;ber digitale Manipulation, Psychologie und Demokratie.</p>
+    <div class="hbtns">
+      <a href="#umfrage" class="bfill">Unsere Daten &rarr;</a>
+      <a href="#quiz" class="bghost">Quiz starten</a>
+    </div>
+  </div>
+  <div class="hstats">
+    <div class="hst"><span class="hn">39</span><span class="hl">Personen an unserer Umfrage beteiligt</span><span class="hs">Eigene Erhebung, Mai 2026</span></div>
+    <div class="hst"><span class="hn">95%</span><span class="hl">der Befragten nutzen soziale Medien</span><span class="hs">Eigene Umfrage 2026</span></div>
+    <div class="hst"><span class="hn">87%</span><span class="hl">beziehen Nachrichten &uuml;ber soziale Medien oder Freunde</span><span class="hs">Eigene Umfrage 2026</span></div>
+    <div class="hst"><span class="hn">55.5%</span><span class="hl">durchschnittliche Deepfake-Erkennungsrate &mdash; kaum besser als Zufall</span><span class="hs">ScienceDirect, 86&rsquo;155 Teilnehmer, 2024</span></div>
+  </div>
+</section>
+
+<div class="tape">
+  <div class="tapet">
+    <span class="tapei">39 Befragte &middot; 95% nutzen Social Media</span>
+    <span class="tapei">87% aus unkontrollierten Nachrichtenquellen</span>
+    <span class="tapei">87% fordern KI-Kennzeichnungspflicht</span>
+    <span class="tapei">Bild 7 (echt): 54% hielten es f&auml;lschlich f&uuml;r KI &mdash; L&uuml;gnerdividende!</span>
+    <span class="tapei">Fake News auf X 70% h&auml;ufiger retweeted als echte Nachrichten</span>
+    <span class="tapei">85 politische Deepfakes in 38 L&auml;ndern 2023&ndash;2024</span>
+    <span class="tapei">39 Befragte &middot; 95% nutzen Social Media</span>
+    <span class="tapei">87% aus unkontrollierten Nachrichtenquellen</span>
+    <span class="tapei">87% fordern KI-Kennzeichnungspflicht</span>
+    <span class="tapei">Bild 7 (echt): 54% hielten es f&auml;lschlich f&uuml;r KI &mdash; L&uuml;gnerdividende!</span>
+    <span class="tapei">Fake News auf X 70% h&auml;ufiger retweeted als echte Nachrichten</span>
+    <span class="tapei">85 politische Deepfakes in 38 L&auml;ndern 2023&ndash;2024</span>
+  </div>
+</div>
+
+<section id="problem" class="sec">
+  <div class="si">
+    <div class="sn rv">01 &mdash; Das Problem</div>
+    <h2 class="rv">Drei Kr&auml;fte.<br>Eine Wirkung.</h2>
+    <p class="sl rv">Soziale Medien, Fake News und Deepfakes verst&auml;rken sich gegenseitig und greifen tief in unsere Informationsverarbeitung ein.</p>
+    <div class="pg rv">
+      <div class="pc"><div class="pcn">01 / 03</div><h3>Soziale Medien &amp; Algorithmen</h3><p>Plattformen wie TikTok, Instagram und YouTube maximieren Verweildauer. Algorithmen bev&#246;rzugen Inhalte, die Wut, Angst und Emp&#246;rung ausl&#246;sen &mdash; nicht sachliche Information.</p><div class="pcf">Unsere Umfrage: 95% der 39 Befragten nutzen Social Media. YouTube (82%), Instagram (67%) und Pinterest (64%) f&uuml;hren.</div></div>
+      <div class="pc"><div class="pcn">02 / 03</div><h3>Fake News &amp; Desinformation</h3><p>Falschmeldungen verbreiten sich auf X (Twitter) bis zu 70% schneller als echte Nachrichten. Sie sind emotionaler, best&auml;tigen Vorurteile und der Faktencheck kommt immer zu sp&auml;t.</p><div class="pcf">87% unserer Befragten holen Nachrichten aus Sozialen Medien (59%) oder von Freunden (64%) &mdash; unkontrollierten Quellen.</div></div>
+      <div class="pc"><div class="pcn">03 / 03</div><h3>Deepfakes &amp; KI-Manipulation</h3><p>KI erschafft heute t&auml;uschend echte Videos, Fotos und Audiospuren in Minuten. 68% dieser F&auml;lschungen sind kaum noch von echten Medien unterscheidbar (Keepnet, 2024).</p><div class="pcf">Nur 0.1% erkannten alle Deepfakes korrekt (iProov, 2025). In unserer Challenge: Bild 5 (KI) wurde zu 92% korrekt erkannt.</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="social" class="sec dk">
+  <div class="si">
+    <div class="sn rv">02 &mdash; Soziale Medien</div>
+    <h2 class="rv">Der Algorithmus<br>formt dein Weltbild.</h2>
+    <p class="sl rv">Plattformen zeigen dir nicht die Welt &mdash; sie zeigen dir eine Version davon, die dich m&ouml;glichst lange h&auml;lt.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:4rem;" class="rv">
+      <div style="display:flex;flex-direction:column;gap:0;">
+        <div style="border-bottom:1px solid rgba(244,239,230,.1);padding:2rem 0;display:flex;gap:1.4rem;"><div style="font-family:var(--fm);font-size:2rem;color:rgba(244,239,230,.07);font-weight:700;width:40px;flex-shrink:0;line-height:1;">01</div><div><h4 style="font-weight:700;font-size:.97rem;margin-bottom:.4rem;color:var(--cr);">Engagement vor Wahrheit</h4><p style="font-size:.86rem;line-height:1.72;color:rgba(244,239,230,.5);">Algorithmen belohnen Emp&ouml;rung und Schock &mdash; nicht Fakten. Falschmeldungen werden auf X bis zu 70% h&auml;ufiger retweeted als echte Nachrichten (Worldmetrics).</p></div></div>
+        <div style="border-bottom:1px solid rgba(244,239,230,.1);padding:2rem 0;display:flex;gap:1.4rem;"><div style="font-family:var(--fm);font-size:2rem;color:rgba(244,239,230,.07);font-weight:700;width:40px;flex-shrink:0;line-height:1;">02</div><div><h4 style="font-weight:700;font-size:.97rem;margin-bottom:.4rem;color:var(--cr);">Filterblasen &amp; Echokammern</h4><p style="font-size:.86rem;line-height:1.72;color:rgba(244,239,230,.5);">Je mehr man mit einer Perspektive interagiert, desto mehr &auml;hnliche Inhalte zeigt der Algorithmus. Gegenpositionen verschwinden schleichend.</p></div></div>
+        <div style="border-bottom:1px solid rgba(244,239,230,.1);padding:2rem 0;display:flex;gap:1.4rem;"><div style="font-family:var(--fm);font-size:2rem;color:rgba(244,239,230,.07);font-weight:700;width:40px;flex-shrink:0;line-height:1;">03</div><div><h4 style="font-weight:700;font-size:.97rem;margin-bottom:.4rem;color:var(--cr);">Microtargeting &amp; Politik</h4><p style="font-size:.86rem;line-height:1.72;color:rgba(244,239,230,.5);">Cambridge Analytica: 87 Millionen Facebook-Profile f&uuml;r gezielte politische Werbung missbraucht. Politische Werbung kann heute pr&auml;zise auf psychologische Profile zugeschnitten werden.</p></div></div>
+        <div style="padding:2rem 0;display:flex;gap:1.4rem;"><div style="font-family:var(--fm);font-size:2rem;color:rgba(244,239,230,.07);font-weight:700;width:40px;flex-shrink:0;line-height:1;">04</div><div><h4 style="font-weight:700;font-size:.97rem;margin-bottom:.4rem;color:var(--cr);">Unsere Befragten</h4><p style="font-size:.86rem;line-height:1.72;color:rgba(244,239,230,.5);">59% holen Nachrichten aus sozialen Medien, 64% von Freunden und Verwandten. Nur 15% lesen eine gedruckte Zeitung &mdash; unkontrollierte Quellen dominieren.</p></div></div>
+      </div>
+      <div style="display:flex;justify-content:center;">
+        <div style="max-width:250px;width:100%;background:#111;border-radius:36px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.6);">
+          <div style="height:26px;background:#090909;display:flex;align-items:center;justify-content:center;"><div style="width:68px;height:17px;background:#050505;border-radius:10px;border:1px solid #1a1a1a;"></div></div>
+          <div style="background:#0e0e0e;height:440px;overflow:hidden;">
+            <div style="padding:.55rem .9rem;border-bottom:1px solid rgba(255,255,255,.05);display:flex;justify-content:space-between;align-items:center;"><span style="font-family:var(--fb);font-size:.8rem;font-weight:700;color:#e0dbd2;">Dein Feed</span><span style="color:#333;">&#8853;</span></div>
+            <div style="animation:scFd 16s linear infinite;">
+              <div style="padding:.65rem .9rem;border-bottom:1px solid rgba(255,255,255,.05);"><div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem;"><div style="width:24px;height:24px;border-radius:50%;background:#c5220d;display:flex;align-items:center;justify-content:center;font-size:.55rem;font-weight:700;color:#000;flex-shrink:0;">B</div><span style="font-size:.68rem;font-weight:600;color:#e0dbd2;">Breaking_CH</span><span style="font-size:.58rem;color:#444;margin-left:auto;">jetzt</span></div><div style="width:100%;height:75px;background:radial-gradient(ellipse 50px 65px at 50% 42%,#c49870,#a07050 60%,transparent 72%),#111;margin-bottom:.45rem;position:relative;"><span style="position:absolute;top:4px;right:4px;background:#c5220d;color:#fff;font-family:var(--fm);font-size:.45rem;padding:1px 4px;letter-spacing:1px;">FAKE</span></div><div style="font-size:.65rem;color:rgba(224,219,210,.65);">&#8222;Bundesrat tritt zur&uuml;ck &#128565;&#8220;</div><div style="font-size:.58rem;color:#444;margin-top:.3rem;">&hearts; 18k &middot; &#128260; 31k <span style="background:rgba(197,34,13,.18);color:#e02b14;font-size:.48rem;padding:1px 4px;margin-left:3px;">&#128293;</span></div></div>
+              <div style="padding:.65rem .9rem;border-bottom:1px solid rgba(255,255,255,.05);"><div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem;"><div style="width:24px;height:24px;border-radius:50%;background:#555;display:flex;align-items:center;justify-content:center;font-size:.55rem;font-weight:700;color:#fff;flex-shrink:0;">S</div><span style="font-size:.68rem;font-weight:600;color:#e0dbd2;">SRF News</span><span style="font-size:.58rem;color:#444;margin-left:auto;">vor 3h</span></div><div style="background:#161616;padding:.6rem;margin-bottom:.45rem;"><div style="font-size:.55rem;color:#c5220d;font-family:var(--fm);">srf.ch</div><div style="font-size:.67rem;font-weight:700;color:#e0dbd2;line-height:1.3;">Medienkompetenz nimmt ab</div></div><div style="font-size:.63rem;color:rgba(224,219,210,.45);">Kritisches Denken schwindet.</div><div style="font-size:.58rem;color:#444;margin-top:.3rem;">&hearts; 38 &middot; &#128260; 9</div></div>
+              <div style="padding:.65rem .9rem;border-bottom:1px solid rgba(255,255,255,.05);"><div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem;"><div style="width:24px;height:24px;border-radius:50%;background:#b8870b;display:flex;align-items:center;justify-content:center;font-size:.55rem;font-weight:700;color:#000;flex-shrink:0;">V</div><span style="font-size:.68rem;font-weight:600;color:#e0dbd2;">Viral_Watch</span><span style="font-size:.58rem;color:#444;margin-left:auto;">vor 7min</span></div><div style="background:#0a0a0a;height:75px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;margin-bottom:.45rem;position:relative;"><span style="font-size:.85rem;color:rgba(240,236,227,.25);">&#9654;</span><span style="font-size:.6rem;color:#555;text-align:center;padding:0 .5rem;">Politiker gesteht Betrug &middot; 7M</span><span style="position:absolute;top:4px;right:4px;background:#c5220d;color:#fff;font-family:var(--fm);font-size:.45rem;padding:1px 4px;">DEEPFAKE</span></div><div style="font-size:.65rem;color:rgba(224,219,210,.65);">&#8222;Das m&uuml;sst ihr sehen!!&#8220;</div><div style="font-size:.58rem;color:#444;margin-top:.3rem;">&hearts; 55k &middot; &#128260; 102k <span style="background:rgba(197,34,13,.18);color:#e02b14;font-size:.48rem;padding:1px 4px;margin-left:3px;">&#128293;</span></div></div>
+              <div style="padding:.65rem .9rem;border-bottom:1px solid rgba(255,255,255,.05);"><div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem;"><div style="width:24px;height:24px;border-radius:50%;background:#c5220d;display:flex;align-items:center;justify-content:center;font-size:.55rem;font-weight:700;color:#000;flex-shrink:0;">B</div><span style="font-size:.68rem;font-weight:600;color:#e0dbd2;">Breaking_CH</span><span style="font-size:.58rem;color:#444;margin-left:auto;">jetzt</span></div><div style="width:100%;height:75px;background:radial-gradient(ellipse 50px 65px at 50% 42%,#c49870,#a07050 60%,transparent 72%),#111;margin-bottom:.45rem;position:relative;"><span style="position:absolute;top:4px;right:4px;background:#c5220d;color:#fff;font-family:var(--fm);font-size:.45rem;padding:1px 4px;">FAKE</span></div><div style="font-size:.65rem;color:rgba(224,219,210,.65);">&#8222;Bundesrat tritt zur&uuml;ck &#128565;&#8220;</div><div style="font-size:.58rem;color:#444;margin-top:.3rem;">&hearts; 18k &middot; &#128260; 31k</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="deepfakes" class="sec md">
+  <div class="si">
+    <div class="sn rv">03 &mdash; Deepfakes</div>
+    <h2 class="rv">KI erschafft<br>eine neue Realit&auml;t.</h2>
+    <p class="sl rv">Deepfakes sind heute kostenlos, schnell und erschreckend &uuml;berzeugend &mdash; mit realen Konsequenzen f&uuml;r die Demokratie.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:4rem;" class="rv">
+      <div style="display:flex;flex-direction:column;gap:1.2rem;">
+        <div style="padding:1.7rem;border:1.5px solid var(--mut2);background:var(--cr);display:grid;grid-template-columns:36px 1fr;gap:1.2rem;transition:border-color .2s;" onmouseenter="this.style.borderColor='rgba(197,34,13,.4)'" onmouseleave="this.style.borderColor='var(--mut2)'"><div style="font-family:var(--fm);font-size:.57rem;color:var(--mut);letter-spacing:2px;">01</div><div><h4 style="font-weight:700;font-size:.94rem;margin-bottom:.4rem;">Wie Deepfakes entstehen (GAN)</h4><p style="font-size:.85rem;line-height:1.7;color:var(--mut);">Ein Generative Adversarial Network besteht aus Generator und Diskriminator. Sie trainieren sich gegenseitig, bis das Ergebnis ununterscheidbar ist. Heute reichen 3 Sekunden Audio f&uuml;r eine 85%-genaue Stimmkopie (McAfee).</p></div></div>
+        <div style="padding:1.7rem;border:1.5px solid var(--mut2);background:var(--cr);display:grid;grid-template-columns:36px 1fr;gap:1.2rem;transition:border-color .2s;" onmouseenter="this.style.borderColor='rgba(197,34,13,.4)'" onmouseleave="this.style.borderColor='var(--mut2)'"><div style="font-family:var(--fm);font-size:.57rem;color:var(--mut);letter-spacing:2px;">02</div><div><h4 style="font-weight:700;font-size:.94rem;margin-bottom:.4rem;">Die L&uuml;gnerdividende</h4><p style="font-size:.85rem;line-height:1.7;color:var(--mut);">Wenn alles gef&auml;lscht sein k&ouml;nnte, k&ouml;nnen Politiker legitime Beweise als &laquo;Deepfake&raquo; abtun. Unser Befund belegt dies: 54% hielten Bild 7 (ein echtes Foto) f&uuml;r KI-generiert.</p></div></div>
+        <div style="padding:1.7rem;border:1.5px solid var(--mut2);background:var(--cr);display:grid;grid-template-columns:36px 1fr;gap:1.2rem;transition:border-color .2s;" onmouseenter="this.style.borderColor='rgba(197,34,13,.4)'" onmouseleave="this.style.borderColor='var(--mut2)'"><div style="font-family:var(--fm);font-size:.57rem;color:var(--mut);letter-spacing:2px;">03</div><div><h4 style="font-weight:700;font-size:.94rem;margin-bottom:.4rem;">Demokratie in Gefahr</h4><p style="font-size:.85rem;line-height:1.7;color:var(--mut);">2023&ndash;2024: 85 politische Deepfakes in 38 L&auml;ndern dokumentiert, 30 davon mit Wahlen. Das WEF listete Deepfakes als eine der gr&ouml;&szlig;ten globalen Demokratiebedrohungen (2024).</p></div></div>
+        <div style="border:1.5px solid var(--mut2);overflow:hidden;">
+          <div style="padding:.65rem 1rem;background:var(--cr3);font-family:var(--fm);font-size:.57rem;color:var(--mut);letter-spacing:2px;text-transform:uppercase;">Dokumentierte F&auml;lle</div>
+          <div style="padding:.95rem 1rem;border-bottom:1px solid var(--mut2);display:flex;gap:.8rem;"><span style="font-size:1.1rem;">&#127794;</span><div><strong style="display:block;font-size:.84rem;margin-bottom:.2rem;">Selenskyj-Deepfake (2022)</strong><p style="font-size:.78rem;color:var(--mut);line-height:1.5;">Gef&auml;lschtes Video forderte ukrainische Soldaten zur Kapitulation auf &mdash; kurz im Staatsfernsehen ausgestrahlt.</p></div></div>
+          <div style="padding:.95rem 1rem;border-bottom:1px solid var(--mut2);display:flex;gap:.8rem;"><span style="font-size:1.1rem;">&#127482;</span><div><strong style="display:block;font-size:.84rem;margin-bottom:.2rem;">Biden-Robocall (Jan. 2024)</strong><p style="font-size:.78rem;color:var(--mut);line-height:1.5;">Tausende W&auml;hler erhielten Anrufe mit Bidens geklonter Stimme &mdash; Empfehlung: nicht w&auml;hlen gehen.</p></div></div>
+          <div style="padding:.95rem 1rem;display:flex;gap:.8rem;"><span style="font-size:1.1rem;">&#127464;</span><div><strong style="display:block;font-size:.84rem;margin-bottom:.2rem;">Schweiz 2023&ndash;2024</strong><p style="font-size:.78rem;color:var(--mut);line-height:1.5;">Deepfake-Werbung mit bekannten Schweizer Pers&ouml;nlichkeiten f&uuml;r Krypto-Betrugsplattformen.</p></div></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:1.5rem;">
+        <div style="border:1.5px solid var(--mut2);overflow:hidden;">
+          <div style="padding:.65rem 1.1rem;border-bottom:1.5px solid var(--mut2);display:flex;justify-content:space-between;font-family:var(--fm);font-size:.6rem;color:var(--mut);"><span>KI-GESICHTSERKENNUNG</span><span style="animation:blnk 1s step-end infinite;">&#9608;</span></div>
+          <div style="width:100%;aspect-ratio:.9;background:radial-gradient(ellipse 110px 140px at 50% 43%,#c49878,#a07858 45%,#785040 68%,transparent 78%),radial-gradient(circle at 50% 10%,#5a3525,transparent 38%),var(--cr2);position:relative;overflow:hidden;">
+            <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(13,107,92,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(13,107,92,.07) 1px,transparent 1px);background-size:22px 22px;"></div>
+            <div style="position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--teal),transparent);box-shadow:0 0 10px var(--teal);animation:scLn 2.8s ease-in-out infinite;"></div>
+            <div style="position:absolute;top:32%;left:34%;width:7px;height:7px;border-radius:50%;background:var(--teal);animation:bps 2s ease infinite;box-shadow:0 0 6px var(--teal);"></div>
+            <div style="position:absolute;top:35%;left:63%;width:7px;height:7px;border-radius:50%;background:var(--teal);animation:bps 2s .5s ease infinite;box-shadow:0 0 6px var(--teal);"></div>
+          </div>
+          <div style="padding:.9rem 1.1rem;border-top:1.5px solid var(--mut2);font-family:var(--fm);font-size:.62rem;color:var(--mut);text-align:center;line-height:1.55;">Dieses Gesicht existiert nicht.<br><strong style="color:var(--red);">thispersondoesnotexist.com</strong> &mdash; jeder Aufruf: neues KI-Gesicht</div>
+        </div>
+        <div style="padding:1.5rem;background:rgba(197,34,13,.06);border:1px solid rgba(197,34,13,.18);">
+          <div style="font-family:var(--fm);font-size:.58rem;color:var(--red);letter-spacing:2px;margin-bottom:.8rem;">ERSCHRECKENDE ZAHLEN</div>
+          <div style="display:flex;flex-direction:column;gap:.7rem;">
+            <div style="display:flex;align-items:center;gap:1rem;"><div style="font-family:var(--fd);font-weight:900;font-size:2rem;color:var(--red);line-height:1;flex-shrink:0;">0.1%</div><p style="font-size:.8rem;color:var(--mut);line-height:1.5;">erkannten alle Deepfakes korrekt (iProov, 2025)</p></div>
+            <div style="display:flex;align-items:center;gap:1rem;"><div style="font-family:var(--fd);font-weight:900;font-size:2rem;color:var(--gold);line-height:1;flex-shrink:0;">2137%</div><p style="font-size:.8rem;color:var(--mut);line-height:1.5;">Anstieg Deepfake-Betrugsversuche in 3 Jahren (Signicat)</p></div>
+            <div style="display:flex;align-items:center;gap:1rem;"><div style="font-family:var(--fd);font-weight:900;font-size:2rem;color:var(--teal);line-height:1;flex-shrink:0;">3 Sek.</div><p style="font-size:.8rem;color:var(--mut);line-height:1.5;">Audio reichen f&uuml;r 85%-genaue Stimmkopie (McAfee)</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="psyche" class="sec dk">
+  <div class="si">
+    <div class="sn rv">04 &mdash; Psychologie</div>
+    <h2 class="rv">Unser Gehirn ist<br>das Einfallstor.</h2>
+    <p class="sl rv">Desinformation funktioniert so gut, weil sie kognitive Schw&auml;chen gezielt ausnutzt &mdash; die beim schnellen Scrollen besonders stark werden.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:4rem;" class="rv">
+      <div>
+        <div style="border-left:3px solid var(--gold2);padding-left:2rem;margin-bottom:2rem;"><p style="font-family:var(--fd);font-style:italic;font-size:clamp(1.25rem,2.5vw,2rem);line-height:1.35;color:var(--cr);margin-bottom:.8rem;">Beim schnellen Scrollen reduziert das Gehirn die Aktivit&auml;t im pr&auml;frontalen Kortex &mdash; dem Zentrum f&uuml;r <em style="color:var(--gold2);font-style:normal;font-family:var(--fd);font-weight:700;">kritisches Denken</em>.</p><div style="font-family:var(--fm);font-size:.57rem;color:rgba(244,239,230,.3);letter-spacing:2px;">Neurowissenschaftliche Forschung / Medienpsychologie</div></div>
+        <div style="padding:1.25rem;background:rgba(244,239,230,.04);border:1px solid rgba(244,239,230,.1);margin-bottom:1rem;"><span style="font-family:var(--fm);font-size:.57rem;color:var(--gold2);letter-spacing:2px;margin-bottom:.5rem;display:block;">CONTINUED INFLUENCE EFFECT</span><p style="font-size:.84rem;line-height:1.7;color:rgba(244,239,230,.5);">Selbst wenn man eine Richtigstellung erh&auml;lt, bleibt die urspr&uuml;ngliche Falschinformation st&auml;rker im Ged&auml;chtnis. Die L&uuml;ge &laquo;&uuml;berschreibt&raquo; die Wahrheit psychologisch.</p></div>
+        <div style="padding:1.25rem;background:rgba(244,239,230,.04);border:1px solid rgba(244,239,230,.1);"><span style="font-family:var(--fm);font-size:.57rem;color:var(--gold2);letter-spacing:2px;margin-bottom:.5rem;display:block;">SELBST&Uuml;BERSCHATZUNG (DUNNING-KRUGER)</span><p style="font-size:.84rem;line-height:1.7;color:rgba(244,239,230,.5);">Globale Erkennungsrate: 55.5% &mdash; kaum besser als Zufall. Unsere Umfrage: 64% sagten &laquo;unsicher&raquo;, nur 26% &laquo;Ja&raquo; &mdash; und trotzdem &uuml;bersch&auml;tzen sich viele systematisch.</p></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:1px;background:rgba(244,239,230,.08);">
+        <div style="background:rgba(10,9,12,.75);padding:1.55rem 1.75rem;display:flex;gap:1rem;align-items:flex-start;"><span style="font-size:1.5rem;flex-shrink:0;">&#128269;</span><div><h4 style="font-weight:700;font-size:.92rem;margin-bottom:.35rem;color:var(--gold2);">Confirmation Bias</h4><p style="font-size:.83rem;line-height:1.65;color:rgba(244,239,230,.45);">Wir glauben bevorzugt Infos, die unsere bestehenden &Uuml;berzeugungen best&auml;tigen. Algorithmen verst&auml;rken diesen Effekt systematisch.</p></div></div>
+        <div style="background:rgba(10,9,12,.75);padding:1.55rem 1.75rem;display:flex;gap:1rem;align-items:flex-start;"><span style="font-size:1.5rem;flex-shrink:0;">&#128257;</span><div><h4 style="font-weight:700;font-size:.92rem;margin-bottom:.35rem;color:var(--gold2);">Illusory Truth Effect</h4><p style="font-size:.83rem;line-height:1.65;color:rgba(244,239,230,.45);">Wiederholte Aussagen wirken wahrer. Meta-Analyse von 182 Studien (31&rsquo;184 Teilnehmer) belegt g=0.37 (Hasher et al.). Desinformationskampagnen nutzen das gezielt aus.</p></div></div>
+        <div style="background:rgba(10,9,12,.75);padding:1.55rem 1.75rem;display:flex;gap:1rem;align-items:flex-start;"><span style="font-size:1.5rem;flex-shrink:0;">&#128548;</span><div><h4 style="font-weight:700;font-size:.92rem;margin-bottom:.35rem;color:var(--gold2);">Emotionale &Uuml;bernahme</h4><p style="font-size:.83rem;line-height:1.65;color:rgba(244,239,230,.45);">Wut und Angst hemmen rationale Analyse im pr&auml;frontalen Kortex. Fake News l&ouml;sen diese Emotionen bewusst aus &mdash; das erh&ouml;ht die Teilrate drastisch.</p></div></div>
+        <div style="background:rgba(10,9,12,.75);padding:1.55rem 1.75rem;display:flex;gap:1rem;align-items:flex-start;"><span style="font-size:1.5rem;flex-shrink:0;">&#128065;&#65039;</span><div><h4 style="font-weight:700;font-size:.92rem;margin-bottom:.35rem;color:var(--gold2);">Seeing is Believing</h4><p style="font-size:.83rem;line-height:1.65;color:rgba(244,239,230,.45);">Das Gehirn vertraut visuellen Medien instinktiv st&auml;rker als Text &mdash; ein biologisch verankertes Vertrauen, das Deepfakes gezielt ausnutzen.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="umfrage" class="sec">
+  <div class="si">
+    <div class="sn rv">05 &mdash; Unsere Umfrage</div>
+    <h2 class="rv">Was die Daten<br>unserer Umfrage zeigen.</h2>
+    <p class="sl rv">39 Personen nahmen an unserer Umfrage teil. Die Ergebnisse zeigen klare Muster &mdash; zur Plattformnutzung, Nachrichtenquelle und der Deepfake-Erkennungsf&auml;higkeit.</p>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:3.5rem;" class="rv">
+      <div style="padding:1.4rem;background:var(--cr2);border:1.5px solid var(--mut2);text-align:center;"><div style="font-family:var(--fd);font-weight:900;font-size:2.8rem;color:var(--red);line-height:1;">39</div><div style="font-size:.75rem;color:var(--mut);margin-top:.3rem;">Teilnehmende</div></div>
+      <div style="padding:1.4rem;background:var(--cr2);border:1.5px solid var(--mut2);text-align:center;"><div style="font-family:var(--fd);font-weight:900;font-size:2.8rem;color:var(--red);line-height:1;">74%</div><div style="font-size:.75rem;color:var(--mut);margin-top:.3rem;">12&ndash;19 Jahre</div></div>
+      <div style="padding:1.4rem;background:var(--cr2);border:1.5px solid var(--mut2);text-align:center;"><div style="font-family:var(--fd);font-weight:900;font-size:2.8rem;color:var(--red);line-height:1;">3:47</div><div style="font-size:.75rem;color:var(--mut);margin-top:.3rem;">&Oslash; Minuten</div></div>
+      <div style="padding:1.4rem;background:var(--cr2);border:1.5px solid var(--mut2);text-align:center;"><div style="font-family:var(--fd);font-weight:900;font-size:2.8rem;color:var(--red);line-height:1;">77%</div><div style="font-size:.75rem;color:var(--mut);margin-top:.3rem;">Weiblich</div></div>
+    </div>
+    <div class="g2 rv">
+      <div class="cc"><h4>Genutzte Social-Media-Plattformen</h4><div class="sub">MEHRFACHAUSWAHL / 39 BEFRAGTE</div><div class="bl2" id="c1"><div class="br2"><div class="brl">YouTube</div><div class="brb blt"><div class="brf br" data-w="82"><span>32</span></div></div></div><div class="br2"><div class="brl">Instagram</div><div class="brb blt"><div class="brf bg2" data-w="67"><span>26</span></div></div></div><div class="br2"><div class="brl">Pinterest</div><div class="brb blt"><div class="brf bt" data-w="64"><span>25</span></div></div></div><div class="br2"><div class="brl">Snapchat</div><div class="brb blt"><div class="brf bb2" data-w="44"><span>17</span></div></div></div><div class="br2"><div class="brl">TikTok</div><div class="brb blt"><div class="brf bp" data-w="26"><span>10</span></div></div></div><div class="br2"><div class="brl">X/Twitter</div><div class="brb blt"><div class="brf" style="background:#8b4513;" data-w="8"><span>3</span></div></div></div><div class="br2"><div class="brl">Facebook</div><div class="brb blt"><div class="brf" style="background:rgba(26,22,20,.25);" data-w="5"><span>2</span></div></div></div></div></div>
+      <div class="cc"><h4>T&auml;gliche Social-Media-Nutzung</h4><div class="sub">STUNDEN PRO TAG / 39 BEFRAGTE</div><div class="bl2" id="c2"><div class="br2"><div class="brl">unter 1h</div><div class="brb blt"><div class="brf bt" data-w="18"><span>7</span></div></div></div><div class="br2"><div class="brl">1&ndash;2 Std.</div><div class="brb blt"><div class="brf bg2" data-w="41"><span>16</span></div></div></div><div class="br2"><div class="brl">3&ndash;4 Std.</div><div class="brb blt"><div class="brf br" data-w="28"><span>11</span></div></div></div><div class="br2"><div class="brl">5&ndash;6 Std.</div><div class="brb blt"><div class="brf bb2" data-w="13"><span>5</span></div></div></div><div class="br2"><div class="brl">7+ Std.</div><div class="brb blt"><div class="brf" style="background:rgba(26,22,20,.15);" data-w="0"><span>0</span></div></div></div></div><div style="margin-top:1.2rem;padding:.75rem;background:rgba(197,34,13,.06);border-left:2px solid var(--red);font-family:var(--fm);font-size:.65rem;color:var(--mut);">41% verbringen 3+ Stunden t&auml;glich auf Social Media &rarr; erh&ouml;htes Desinformationsrisiko</div></div>
+      <div class="cc"><h4>Haupts&auml;chliche Nachrichtenquellen</h4><div class="sub">MEHRFACHAUSWAHL / 39 BEFRAGTE</div><div class="bl2" id="c3"><div class="br2"><div class="brl">Freunde</div><div class="brb blt"><div class="brf br" data-w="64"><span>25</span></div></div></div><div class="br2"><div class="brl">Soz. Medien</div><div class="brb blt"><div class="brf bg2" data-w="59"><span>23</span></div></div></div><div class="br2"><div class="brl">Tagesschau</div><div class="brb blt"><div class="brf bt" data-w="51"><span>20</span></div></div></div><div class="br2"><div class="brl">Ztg. online</div><div class="brb blt"><div class="brf bb2" data-w="38"><span>15</span></div></div></div><div class="br2"><div class="brl">Ztg. print</div><div class="brb blt"><div class="brf bp" data-w="15"><span>6</span></div></div></div></div><div style="margin-top:1.2rem;padding:.75rem;background:rgba(184,135,11,.08);border-left:2px solid var(--gold);font-family:var(--fm);font-size:.65rem;color:var(--mut);">&#9888; 87% aus unkontrollierten Quellen (Soz. Medien + Freunde)</div></div>
+      <div class="cc"><h4>Angst vor Deepfakes &amp; Fake News</h4><div class="sub">39 BEFRAGTE</div><div class="drow"><svg viewBox="0 0 120 120" width="130" height="130" style="flex-shrink:0;"><circle cx="60" cy="60" r="40" fill="none" stroke="rgba(26,22,20,.07)" stroke-width="18"/><circle cx="60" cy="60" r="40" fill="none" stroke="#d4a417" stroke-width="18" stroke-dasharray="135.2 116.1" stroke-dashoffset="62.8" transform="rotate(-90 60 60)"/><circle cx="60" cy="60" r="40" fill="none" stroke="#c5220d" stroke-width="18" stroke-dasharray="70.9 180.4" stroke-dashoffset="-72.4" transform="rotate(-90 60 60)"/><circle cx="60" cy="60" r="40" fill="none" stroke="#0d6b5c" stroke-width="18" stroke-dasharray="38.7 212.6" stroke-dashoffset="-143.3" transform="rotate(-90 60 60)"/><circle cx="60" cy="60" r="40" fill="none" stroke="rgba(26,22,20,.2)" stroke-width="18" stroke-dasharray="6.5 244.8" stroke-dashoffset="-182" transform="rotate(-90 60 60)"/><text x="60" y="56" text-anchor="middle" font-family="Playfair Display,serif" font-weight="900" font-size="16" fill="#1a1614">82%</text><text x="60" y="68" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="7" fill="#888">Ja/Eher ja</text></svg><div class="dleg"><div class="dli"><div class="dld" style="background:var(--red);"></div>Ja &mdash; 11 (28.2%)</div><div class="dli"><div class="dld" style="background:var(--gold2);"></div>Eher ja &mdash; 21 (53.8%)</div><div class="dli"><div class="dld" style="background:var(--teal);"></div>Eher nein &mdash; 6 (15.4%)</div><div class="dli"><div class="dld" style="background:rgba(26,22,20,.25);"></div>Nein &mdash; 1 (2.6%)</div></div></div><div style="margin-top:1rem;padding:.75rem;background:rgba(197,34,13,.06);border-left:2px solid var(--red);font-family:var(--fm);font-size:.65rem;color:var(--mut);">82% machen sich Sorgen &mdash; Sensibilisierung wirkt.</div></div>
+    </div>
+    <div class="cc rv" style="margin-top:1.5rem;"><h4>Wie sollte man Fake News bek&auml;mpfen?</h4><div class="sub">MEHRFACHAUSWAHL / 39 BEFRAGTE &mdash; ST&Auml;RKSTER BEFUND</div><div class="bl2" id="c5"><div class="br2"><div style="font-family:var(--fm);font-size:.6rem;color:var(--mut);width:240px;flex-shrink:0;text-align:right;">KI-Kennzeichnungspflicht</div><div class="brb blt"><div class="brf br" data-w="87"><span>34 / 87%</span></div></div></div><div class="br2"><div style="font-family:var(--fm);font-size:.6rem;color:var(--mut);width:240px;flex-shrink:0;text-align:right;">Mehr Gesetze</div><div class="brb blt"><div class="brf bg2" data-w="59"><span>23 / 59%</span></div></div></div><div class="br2"><div style="font-family:var(--fm);font-size:.6rem;color:var(--mut);width:240px;flex-shrink:0;text-align:right;">Schule &amp; Bildung</div><div class="brb blt"><div class="brf bt" data-w="41"><span>16 / 41%</span></div></div></div><div class="br2"><div style="font-family:var(--fm);font-size:.6rem;color:var(--mut);width:240px;flex-shrink:0;text-align:right;">Anderes</div><div class="brb blt"><div class="brf bb2" data-w="5"><span>2</span></div></div></div></div><div style="margin-top:1.3rem;padding:1rem;background:rgba(184,135,11,.08);border:1px solid rgba(184,135,11,.2);font-size:.84rem;color:var(--mut);line-height:1.62;"><strong style="color:var(--ink);">Interpretation:</strong> 87% fordern eine Kennzeichnungspflicht f&uuml;r KI-generierte Inhalte &mdash; der mit Abstand st&auml;rkste Befund. Nur 41% nennen Bildung &mdash; obwohl individuelle Medienkompetenz langfristig entscheidend ist. Dies zeigt eine Verlagerung der Verantwortung an Plattformen und Gesetzgeber.</div></div>
+    <div style="margin-top:3.5rem;" class="rv">
+      <h3 style="font-family:var(--fd);font-weight:700;font-size:1.75rem;margin-bottom:.5rem;">Bild-Erkennungs-Challenge</h3>
+      <p style="font-size:.9rem;color:var(--mut);margin-bottom:2rem;line-height:1.65;">Die 39 Befragten mussten 8 Bilder als echt oder KI-generiert einordnen. Gr&uuml;ner Rahmen = KI korrekt erkannt. Roter Rahmen = echtes Bild f&auml;lschlich f&uuml;r KI gehalten (L&uuml;gnerdividende).</p>
+      <div class="ig" id="imgGrid">
+        <div class="ic"><div class="iph ip1"><span>&#129422;</span><span class="ibadge ib-echt">ECHT</span></div><div class="ifoot"><div class="iname">Bild 1 &mdash; Leguan</div><div class="ibw"><div class="ibf" data-w="18" style="background:var(--mut);"><span>18%</span></div></div><div class="ipct">7/39 hielten es f&uuml;r KI</div></div></div>
+        <div class="ic kc"><div class="iph ip2"><span>&#127859;</span><span class="ibadge ib-ki">KI</span></div><div class="ifoot"><div class="iname">Bild 2 &mdash; Essen</div><div class="ibw"><div class="ibf" data-w="69" style="background:var(--teal2);"><span>69%</span></div></div><div class="ipct">27/39 korrekt erkannt &#10003;</div></div></div>
+        <div class="ic"><div class="iph ip3"><span>&#127908;</span><span class="ibadge ib-echt">ECHT</span></div><div class="ifoot"><div class="iname">Bild 3 &mdash; Politiker</div><div class="ibw"><div class="ibf" data-w="23" style="background:var(--mut);"><span>23%</span></div></div><div class="ipct">9/39 hielten es f&uuml;r KI</div></div></div>
+        <div class="ic"><div class="iph ip4"><span>&#129387;</span><span class="ibadge ib-ki">KI</span></div><div class="ifoot"><div class="iname">Bild 4 &mdash; Salat</div><div class="ibw"><div class="ibf" data-w="33" style="background:var(--gold2);"><span>33%</span></div></div><div class="ipct">13/39 erkannt &mdash; 67% FALSCH</div></div></div>
+        <div class="ic kc"><div class="iph ip5"><span>&#128100;</span><span class="ibadge ib-ki">KI</span></div><div class="ifoot"><div class="iname">Bild 5 &mdash; Portrait &#9733;</div><div class="ibw"><div class="ibf" data-w="92" style="background:var(--teal2);"><span>92%</span></div></div><div class="ipct">36/39 korrekt &mdash; Bestes Ergebnis!</div></div></div>
+        <div class="ic"><div class="iph ip6"><span>&#127800;</span><span class="ibadge ib-echt">ECHT</span></div><div class="ifoot"><div class="iname">Bild 6 &mdash; Natur</div><div class="ibw"><div class="ibf" data-w="36" style="background:var(--mut);"><span>36%</span></div></div><div class="ipct">14/39 f&auml;lschlich f&uuml;r KI gehalten</div></div></div>
+        <div class="ic ew"><div class="iph ip7"><span>&#128247;</span><span class="ibadge ib-echt">ECHT</span></div><div class="ifoot"><div class="iname">Bild 7 &mdash; Paparazzi &#9888;</div><div class="ibw"><div class="ibf" data-w="54" style="background:var(--red);"><span>54%</span></div></div><div class="ipct">21/39 FALSCH &mdash; L&uuml;gnerdividende!</div></div></div>
+        <div class="ic"><div class="iph ip8"><span>&#127754;</span><span class="ibadge ib-echt">ECHT</span></div><div class="ifoot"><div class="iname">Bild 8 &mdash; Wasserfall</div><div class="ibw"><div class="ibf" data-w="10" style="background:var(--teal);"><span>10%</span></div></div><div class="ipct">Kaum als KI eingestuft</div></div></div>
+      </div>
+      <div class="g2" style="margin-top:1.5rem;">
+        <div style="padding:1.5rem;background:rgba(197,34,13,.06);border:1px solid rgba(197,34,13,.2);"><div style="font-family:var(--fm);font-size:.58rem;color:var(--red);letter-spacing:2px;margin-bottom:.65rem;">SCHLIMMSTER FEHLER &mdash; L&Uuml;GNERDIVIDENDE</div><div style="font-family:var(--fd);font-weight:700;font-size:1.4rem;margin-bottom:.5rem;">Bild 7 &mdash; 54% falsch</div><p style="font-size:.84rem;color:var(--mut);line-height:1.62;">Mehr als die H&auml;lfte hielt ein echtes Foto einer Paparazzi-Szene f&uuml;r KI-generiert. Dies zeigt die &laquo;L&uuml;gnerdividende&raquo;: Wenn alles KI sein k&ouml;nnte, werden auch echte Bilder als F&auml;lschung eingestuft. Das gef&auml;hrdet unser Vertrauen in echte Beweise &mdash; ein zentrales gesellschaftliches Problem.</p></div>
+        <div style="padding:1.5rem;background:rgba(13,107,92,.06);border:1px solid rgba(13,107,92,.2);"><div style="font-family:var(--fm);font-size:.58rem;color:var(--teal);letter-spacing:2px;margin-bottom:.65rem;">BESTES ERGEBNIS</div><div style="font-family:var(--fd);font-weight:700;font-size:1.4rem;margin-bottom:.5rem;">Bild 5 &mdash; 92% korrekt</div><p style="font-size:.84rem;color:var(--mut);line-height:1.62;">Das KI-generierte Portrait wurde von 36/39 Personen korrekt erkannt. KI-Portraits sind erkennbarer als KI-Foodfotos. Bild 4 (KI-Salat) wurde nur zu 33% erkannt &mdash; t&auml;uschend &uuml;berzeugend. Dies zeigt: Die Erkennungsf&auml;higkeit h&auml;ngt stark vom Bildtyp ab.</p></div>
+      </div>
+    </div>
+    <div style="margin-top:3.5rem;" class="rv">
+      <h3 style="font-family:var(--fd);font-weight:700;font-size:1.75rem;margin-bottom:.5rem;">Korrelationsanalyse</h3>
+      <p style="font-size:.9rem;color:var(--mut);margin-bottom:2rem;line-height:1.65;">Gibt es Zusammenh&auml;nge zwischen Bildschirmzeit, Altersgruppe, Selbsteinsch&auml;tzung und der tats&auml;chlichen Erkennungsleistung?</p>
+      <div class="g3">
+        <div class="cc"><div style="font-family:var(--fm);font-size:.58rem;color:var(--mut);letter-spacing:2px;margin-bottom:.75rem;">KORRELATION 1</div><h4>Bildschirmzeit vs. Erkennungsrate</h4><div style="font-family:var(--fd);font-weight:900;font-size:2.5rem;color:var(--gold);line-height:1;margin:1rem 0;">r &asymp; &minus;0.2</div><p style="font-size:.82rem;color:var(--mut);line-height:1.62;">Schwach negativer Zusammenhang: Wer mehr Zeit auf Social Media verbringt, erkannte Deepfakes tendenziell schlechter. Effekt klein, aber konsistent mit internationalen Studien. <strong>Vorsicht:</strong> n=39 ist zu klein f&uuml;r starke Schl&uuml;sse.</p></div>
+        <div class="cc"><div style="font-family:var(--fm);font-size:.58rem;color:var(--mut);letter-spacing:2px;margin-bottom:.75rem;">KORRELATION 2</div><h4>Selbsteinsch&auml;tzung vs. Realit&auml;t</h4><div style="font-family:var(--fd);font-weight:900;font-size:2.5rem;color:var(--red);line-height:1;margin:1rem 0;">r &asymp; 0.0</div><p style="font-size:.82rem;color:var(--mut);line-height:1.62;">Kein messbarer Zusammenhang. 64% sagten &laquo;unsicher&raquo; &mdash; und lagen nicht schlechter als die 26%, die &laquo;Ja&raquo; sagten. Best&auml;tigt den Dunning-Kruger-Effekt: Selbsteinsch&auml;tzung korreliert nicht mit tats&auml;chlicher Medienkompetenz.</p></div>
+        <div class="cc"><div style="font-family:var(--fm);font-size:.58rem;color:var(--mut);letter-spacing:2px;margin-bottom:.75rem;">LIMITATION</div><h4>Kritische Reflexion</h4><div style="font-family:var(--fd);font-weight:900;font-size:2.5rem;color:var(--teal);line-height:1;margin:1rem 0;">n=39</div><p style="font-size:.82rem;color:var(--mut);line-height:1.62;">Stichprobengr&ouml;&szlig;e zu klein f&uuml;r robuste Korrelationen. 74% sind 12&ndash;19 Jahre &mdash; nicht repr&auml;sentativ. Ohne Zeitlimit in der Bild-Challenge. Die Erkenntnisse zeigen Tendenzen, keine statistischen Beweise.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="quiz" class="sec md">
+  <div class="si">
+    <div class="sn rv">06 &mdash; Teste dich</div>
+    <h2 class="rv">Erkennst du<br>den Unterschied?</h2>
+    <p class="sl rv">Nur 0.1% erkannten alle Deepfakes in einer Studie. Das Quiz ist bewusst schwer &mdash; wie die Realit&auml;t.</p>
+    <div class="qw rv">
+      <div style="background:var(--ink);padding:.85rem 1.3rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;font-family:var(--fm);font-size:.65rem;color:rgba(244,239,230,.4);margin-bottom:2rem;"><span>6 Fragen</span><span>&middot;</span><span style="color:var(--gold2);">Schwierigkeitsgrad: Hoch</span><span>&middot;</span><span>Echte Manipulationstechniken</span><span style="margin-left:auto;background:rgba(197,34,13,.2);color:var(--red2);padding:.22rem .65rem;font-size:.58rem;">&#9888; Du wirst &uuml;berrascht</span></div>
+      <div class="qprog"><div class="qpip active" id="pp0"></div><div class="qpip" id="pp1"></div><div class="qpip" id="pp2"></div><div class="qpip" id="pp3"></div><div class="qpip" id="pp4"></div><div class="qpip" id="pp5"></div></div>
+      <div class="qsl show" id="qs0"><div class="qvis"><div class="qimg fa"><div class="qibar"><span>Frage 1/6 &middot; Portrait A</span><span>ECHT ODER KI?</span></div></div></div><p class="qq">Ist dieses Portr&auml;t ein echtes Foto oder KI-generiert?</p><div class="qopts"><button class="qopt" onclick="qa(this,false,0)"><span>&#128247;</span><span>Echtes Foto</span></button><button class="qopt" onclick="qa(this,true,0)"><span>&#129302;</span><span>KI-generiert</span></button></div><div class="qfb" id="qf0"><h4>&#129302; KI-generiert &mdash; richtig!</h4><p>Diese Person existiert nicht. Erkennungszeichen: Haut zu gleichm&auml;&szlig;ig, Haare am Rand unscharf, kein logischer Hintergrund. Tools wie thispersondoesnotexist.com generieren solche Bilder in Millisekunden &mdash; kostenlos, unbegrenzt.</p></div><div class="qnr"><button class="bfill" onclick="qn(1)" id="qnb0" style="display:none">Weiter &#8250;</button></div></div>
+      <div class="qsl" id="qs1"><div class="qvis"><div class="qimg fb2"><div class="qibar"><span>Frage 2/6 &middot; Portrait B</span><span>ECHT ODER KI?</span></div></div></div><p class="qq">Dieses Portr&auml;t wirkt fast zu perfekt. Echt oder KI?</p><div class="qopts"><button class="qopt" onclick="qa(this,true,1)"><span>&#128247;</span><span>Echtes Foto</span></button><button class="qopt" onclick="qa(this,false,1)"><span>&#129302;</span><span>KI-generiert &mdash; zu perfekt</span></button></div><div class="qfb" id="qf1"><h4>&#128247; Echtes Foto &mdash; viele liegen falsch!</h4><p>Echte Fotos mit guter Kamera wirken oft &laquo;zu perfekt&raquo;. 68% der Deepfakes sind kaum von echten Medien unterscheidbar (Keepnet, 2024) &mdash; aber auch echte Bilder werden f&auml;lschlich f&uuml;r KI gehalten (L&uuml;gnerdividende). Genau das zeigt unser Bild-7-Ergebnis.</p></div><div class="qnr"><button class="bfill" onclick="qn(2)" id="qnb1" style="display:none">Weiter &#8250;</button></div></div>
+      <div class="qsl" id="qs2"><div class="qvis"><div class="qimg qnews" style="height:250px;"><div class="qns">srf.ch &mdash; Inland &mdash; 14. M&auml;rz 2026</div><div class="qnh">&bdquo;Bundesrat: KI-Inhalte auf sozialen Medien werden ab Mai kennzeichnungspflichtig&ldquo;</div><div class="qnb">Bern &mdash; Der Bundesrat hat heute beschlossen, eine Kennzeichnungspflicht f&uuml;r KI-generierte Inhalte auf sozialen Plattformen einzuf&uuml;hren. Die Ma&szlig;nahme gilt per 1. Mai 2026 f&uuml;r alle Plattformen mit mehr als 500&rsquo;000 Schweizer Nutzern...</div><div class="qibar"><span>Frage 3/6 &middot; Schlagzeile</span><span>ECHT ODER FAKE?</span></div></div></div><p class="qq">Ist diese SRF-Schlagzeile echt oder eine erfundene Falschmeldung?</p><div class="qopts"><button class="qopt" onclick="qa(this,false,2)"><span>&#10003;</span><span>Echte Meldung &mdash; klingt plausibel</span></button><button class="qopt" onclick="qa(this,true,2)"><span>&#128680;</span><span>Erfundene Falschmeldung</span></button></div><div class="qfb" id="qf2"><h4>&#128680; Falschmeldung &mdash; viele irren hier!</h4><p>Diese Meldung ist frei erfunden. Das macht sie so gef&auml;hrlich: plausibles Thema, echtes SRF-Branding, konkretes Datum. Immer direkt auf srf.ch pr&uuml;fen &mdash; nie nur Screenshots vertrauen.</p></div><div class="qnr"><button class="bfill" onclick="qn(3)" id="qnb2" style="display:none">Weiter &#8250;</button></div></div>
+      <div class="qsl" id="qs3"><div class="qvis"><div class="qimg qnews" style="height:235px;"><div class="qns">Screenshot &middot; Zitat</div><div class="qnh">&bdquo;Wir m&uuml;ssen aufh&ouml;ren, Russland als Feind zu betrachten.&ldquo;</div><div class="qnb">&mdash; <strong>Emmanuel Macron</strong>, Frankreich &middot; Reuters, 27. Feb. 2022<br><span style="font-size:.75rem;color:var(--mut);">Geteilt 48&rsquo;000&times; auf X &middot; &bdquo;Beweis f&uuml;r Macrons Russland-Sympathien&ldquo;</span></div><div class="qibar"><span>Frage 4/6 &middot; Zitat</span><span>ECHT ODER MANIPULIERT?</span></div></div></div><p class="qq">Das Zitat wird als Beweis f&uuml;r Macrons Russland-Sympathien geteilt. Echt oder gef&auml;lscht?</p><div class="qopts"><button class="qopt" onclick="qa(this,false,3)"><span>&#128680;</span><span>Gef&auml;lscht &mdash; hat er nie gesagt</span></button><button class="qopt" onclick="qa(this,true,3)"><span>&#9888;&#65039;</span><span>Echt &mdash; aber aus dem Kontext gerissen</span></button></div><div class="qfb" id="qf3"><h4>&#9888;&#65039; Echt &mdash; aber massiv durch Kontextverlust manipuliert!</h4><p>Macron sagte dies in einem Pl&auml;doyer f&uuml;r Diplomatie mit explizitem Gegengewicht. Das Weglassen des zweiten Teils dreht die Aussage um 180 Grad. &laquo;Kontext-Manipulation&raquo; ist die h&auml;ufigste Form der Desinformation &mdash; schwerer zu erkennen als komplette Erfindungen.</p></div><div class="qnr"><button class="bfill" onclick="qn(4)" id="qnb3" style="display:none">Weiter &#8250;</button></div></div>
+      <div class="qsl" id="qs4"><div class="qvis"><div style="display:grid;grid-template-columns:1fr 1fr;height:210px;"><div class="qimg fa" style="height:100%;"><div style="position:absolute;bottom:0;left:0;right:0;padding:.4rem .75rem;background:rgba(26,22,20,.72);font-family:var(--fm);font-size:.55rem;color:rgba(244,239,230,.5);">Gesicht LINKS</div></div><div class="qimg fb2" style="height:100%;border-left:1.5px solid var(--mut2);"><div style="position:absolute;bottom:0;left:0;right:0;padding:.4rem .75rem;background:rgba(26,22,20,.72);font-family:var(--fm);font-size:.55rem;color:rgba(244,239,230,.5);">Gesicht RECHTS</div></div></div></div><p class="qq">Eines ist KI-generiert, das andere ein echtes Foto. Welches ist die F&auml;lschung?</p><div class="qopts"><button class="qopt" onclick="qa(this,true,4)"><span>&#129302;</span><span>Links ist KI-generiert</span></button><button class="qopt" onclick="qa(this,false,4)"><span>&#129302;</span><span>Rechts ist KI-generiert</span></button></div><div class="qfb" id="qf4"><h4>&#129302; Links ist KI &mdash; kaum erkennbar!</h4><p>Bei Paarvergleichen liegt die Erkennungsrate laut Meta-Analyse (ScienceDirect, 2024) nicht signifikant &uuml;ber dem Zufall (50%). Achte auf Haare an den R&auml;ndern, Z&auml;hne, Ohrasymmetrie &mdash; dort entstehen noch Fehler.</p></div><div class="qnr"><button class="bfill" onclick="qn(5)" id="qnb4" style="display:none">Weiter &#8250;</button></div></div>
+      <div class="qsl" id="qs5"><div class="qvis"><div class="qimg" style="background:var(--ink);flex-direction:column;gap:.9rem;padding:2rem;"><div style="font-family:var(--fm);font-size:.58rem;color:rgba(244,239,230,.22);">VIDEO &middot; 0:54 &middot; vor 22 Min</div><div style="width:52px;height:52px;border:2px solid rgba(244,239,230,.14);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.05rem;color:rgba(244,239,230,.28);">&#9654;</div><div style="text-align:center;max-width:300px;"><div style="font-size:.88rem;font-weight:700;color:rgba(244,239,230,.82);line-height:1.3;margin-bottom:.4rem;">&bdquo;Bundespr&auml;sident k&uuml;ndigt Notstandserkl&auml;rung an&ldquo;</div><div style="font-size:.62rem;color:rgba(244,239,230,.28);font-family:var(--fm);">&#10003; Verifiziertes Konto &middot; 9.4 Mio. Views &middot; 380k Shares</div></div><div class="qibar" style="bottom:0;"><span>Frage 6/6 &middot; Virales Video</span><span>WAS TUST DU?</span></div></div></div><p class="qq">Ein Video geht viral: Bundespr&auml;sident k&uuml;ndigt Notstand an &mdash; du h&ouml;rst ihn so nie reden. 9 Mio. Views. Was tust du?</p><div class="qopts"><button class="qopt" onclick="qa(this,false,5)"><span>&#128228;</span><span>Teilen &mdash; 9M k&ouml;nnen nicht irren</span></button><button class="qopt" onclick="qa(this,false,5)"><span>&#128172;</span><span>Kommentieren: &laquo;Ist das echt?&raquo;</span></button><button class="qopt" onclick="qa(this,false,5)"><span>&#128064;</span><span>Anschauen und weiterscrollen</span></button><button class="qopt" onclick="qa(this,true,5)"><span>&#128269;</span><span>Zuerst auf srf.ch pr&uuml;fen</span></button></div><div class="qfb" id="qf5"><h4>&#128269; Erst pr&uuml;fen &mdash; einzig richtige Antwort!</h4><p>Views und verifizierte Konten sind kein Echtheitsbeweis. Goldene Regel: Gro&szlig;e echte Nachrichten berichten sofort auch SRF, NZZ, Blick. Nichts dort? H&ouml;chste Vorsicht. Kommentieren und Anschauen helfen dem Algorithmus sogar, das Video weiter zu verbreiten.</p></div><div class="qnr"><button class="bfill" onclick="qShowEnd()" id="qnb5" style="display:none">Ergebnis &#8250;</button></div></div>
+      <div id="qend"><div class="qetop"><div class="qen" id="qsc">0</div><div class="qeof">von 6 richtigen Antworten</div></div><div class="qebr"><p class="qemsg" id="qmsg"></p><div class="qecmp" id="qcmp"></div><br><button class="bghost" onclick="qReset()" style="cursor:none;margin-top:1.2rem;">Nochmals versuchen</button></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="tipps" class="sec">
+  <div class="si">
+    <div class="sn rv">07 &mdash; Was tun?</div>
+    <h2 class="rv">F&uuml;nf Regeln.<br>T&auml;glich anwenden.</h2>
+    <div class="tr rv">
+      <div class="ti"><div class="tin">01/05</div><span class="tem">&#9208;&#65039;</span><h4>Pause vor dem Teilen</h4><p>5 Sekunden warten. Frage: Woher kommt das? Was f&uuml;hle ich? Starke Emotionen sind Warnsignal &mdash; kein Teilen-Signal.</p></div>
+      <div class="ti"><div class="tin">02/05</div><span class="tem">&#128269;</span><h4>Umgekehrte Bildersuche</h4><p>Rechtsklick &#8594; &laquo;Bild in Google suchen&raquo;. Sofort sichtbar ob Bild manipuliert oder aus anderem Kontext stammt.</p><a href="https://images.google.com" target="_blank" class="tl2">&#8594; images.google.com</a></div>
+      <div class="ti"><div class="tin">03/05</div><span class="tem">&#128240;</span><h4>Mehrere Quellen</h4><p>Gro&szlig;e Nachrichten berichten viele Medien gleichzeitig. Nur auf Social Media? Nicht auf srf.ch? Sofort misstrauisch.</p><a href="https://srf.ch/news" target="_blank" class="tl2">&#8594; srf.ch/news</a></div>
+      <div class="ti"><div class="tin">04/05</div><span class="tem">&#129520;</span><h4>Detektions-Tools</h4><p>FotoForensics analysiert Bilder auf Manipulationsspuren. Videos: Lippensynchronisation, Augenblinzeln und Beleuchtung pr&uuml;fen.</p><a href="https://fotoforensics.com" target="_blank" class="tl2">&#8594; fotoforensics.com</a></div>
+      <div class="ti"><div class="tin">05/05</div><span class="tem">&#129504;</span><h4>Kontext immer pr&uuml;fen</h4><p>Echte Zitate k&ouml;nnen durch K&uuml;rzung zur L&uuml;ge werden. Nie nur Headlines lesen &mdash; immer Originalquelle und vollen Artikel suchen.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec dk">
+  <div class="si">
+    <div class="sn rv">08 &mdash; Reflexion</div>
+    <h2 class="rv">Was wir gelernt haben.</h2>
+    <div class="g3 rv">
+      <div style="padding:2rem;border:1.5px solid rgba(244,239,230,.1);background:rgba(244,239,230,.03);"><span style="font-size:1.5rem;display:block;margin-bottom:.75rem;">&#128161;</span><h4 style="font-weight:700;font-size:.95rem;color:var(--cr);margin-bottom:.85rem;">Erkenntnisse</h4><p style="font-size:.84rem;line-height:1.7;color:rgba(244,239,230,.5);">95% nutzen Social Media, 87% aus unkontrollierten Quellen. Selbsteinsch&auml;tzung korreliert kaum mit tats&auml;chlicher Erkennungsleistung. 87% fordern KI-Kennzeichnungspflicht &mdash; das Bewusstsein ist vorhanden, aber die Verantwortung wird an andere delegiert.</p></div>
+      <div style="padding:2rem;border:1.5px solid rgba(244,239,230,.1);background:rgba(244,239,230,.03);"><span style="font-size:1.5rem;display:block;margin-bottom:.75rem;">&#9888;&#65039;</span><h4 style="font-weight:700;font-size:.95rem;color:var(--cr);margin-bottom:.85rem;">Limitationen</h4><p style="font-size:.84rem;line-height:1.7;color:rgba(244,239,230,.5);">n=39 zu klein f&uuml;r statistisch robuste Korrelationen. 74% sind 12&ndash;19 Jahre &mdash; nicht repr&auml;sentativ f&uuml;r alle Altersgruppen. Ohne Zeitlimit in der Bild-Challenge. Die Ergebnisse zeigen Tendenzen, keine statistischen Beweise.</p></div>
+      <div style="padding:2rem;border:1.5px solid rgba(244,239,230,.1);background:rgba(244,239,230,.03);"><span style="font-size:1.5rem;display:block;margin-bottom:.75rem;">&#127919;</span><h4 style="font-weight:700;font-size:.95rem;color:var(--cr);margin-bottom:.85rem;">Schlussfolgerung</h4><p style="font-size:.84rem;line-height:1.7;color:rgba(244,239,230,.5);">Technische Kennzeichnungspflichten und Gesetze allein gen&uuml;gen nicht. Bildung in Medienkompetenz &mdash; von nur 41% als L&ouml;sung genannt &mdash; ist langfristig genauso wichtig. Individuelle Wachsamkeit und strukturelle Ma&szlig;nahmen m&uuml;ssen Hand in Hand gehen.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div><div class="flogo">Scroll<b>Stop</b></div><p style="margin-top:.4rem;">Informatik &amp; Gesellschaft &middot; Projektarbeit 2026</p></div>
+  <p>Eigene Umfrage: 39 Teilnehmende, Mai 2026.<br>Externe Quellen: ScienceDirect (2024, 86&rsquo;155 Teilnehmer) &middot; iProov (2025) &middot; Signicat &middot; Keepnet (2024) &middot; WEF Global Risks Report (2024) &middot; Brookings (2022) &middot; Worldmetrics &middot; McAfee &middot; Hasher et al. (1977)</p>
+  <p>thispersondoesnotexist.com &middot; fotoforensics.com &middot; srf.ch/news</p>
+</footer>
+
+<script>
+const C=document.getElementById("cu"),C2=document.getElementById("cu2");
+document.addEventListener("mousemove",e=>{
+  C.style.left=e.clientX+"px";C.style.top=e.clientY+"px";
+  setTimeout(()=>{C2.style.left=e.clientX+"px";C2.style.top=e.clientY+"px";},65);
+});
+document.querySelectorAll("a,button,[onclick]").forEach(el=>{
+  el.addEventListener("mouseenter",()=>document.body.classList.add("hv"));
+  el.addEventListener("mouseleave",()=>document.body.classList.remove("hv"));
+});
+const ro=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&e.target.classList.add("on")),{threshold:.08});
+document.querySelectorAll(".rv").forEach(el=>ro.observe(el));
+function animAll(){
+  document.querySelectorAll(".brf").forEach(b=>{if(b.dataset.w)b.style.width=b.dataset.w+"%";});
+  document.querySelectorAll(".ibf").forEach(b=>{if(b.dataset.w)b.style.width=b.dataset.w+"%";});
+}
+[".g2","#c5","#imgGrid"].forEach(s=>{
+  const el=document.querySelector(s);
+  if(!el)return;
+  new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)animAll();});},{threshold:.1}).observe(el);
+});
+let qs=0;const qans=[null,null,null,null,null,null];
+function qa(btn,c,i){
+  if(qans[i]!==null)return;qans[i]=c;if(c)qs++;
+  const btns=btn.closest(".qopts").querySelectorAll(".qopt");
+  btns.forEach(b=>b.disabled=true);
+  btn.classList.add(c?"ri":"wr");
+  if(!c)btns.forEach(b=>{if(!b.classList.contains("wr"))b.classList.add("ri");});
+  const fb=document.getElementById("qf"+i);
+  fb.classList.add("show");if(c)fb.classList.add("ok");
+  document.getElementById("qnb"+i).style.display="inline-flex";
+  document.getElementById("pp"+i).classList.remove("active");
+  document.getElementById("pp"+i).classList.add("done");
+  if(i<5)document.getElementById("pp"+(i+1)).classList.add("active");
+}
+function qn(n){document.getElementById("qs"+(n-1)).classList.remove("show");document.getElementById("qs"+n).classList.add("show");}
+function qShowEnd(){
+  document.getElementById("qs5").classList.remove("show");
+  document.getElementById("qend").style.display="block";
+  document.getElementById("qsc").textContent=qs;
+  const msgs=["Du wirst leicht get&auml;uscht. Die Tipps helfen wirklich.","Unter dem Durchschnitt. Normal &mdash; Desinformation ist auf unser Gehirn ausgelegt.","Entspricht dem globalen Durchschnitt (55.5%) &mdash; kaum besser als Zufall.","Gut! Technologie entwickelt sich aber schneller als unsere Erkennung.","Sehr gut! Bleib kritisch &mdash; auch du kannst get&auml;uscht werden.","Ausgezeichnet! Du denkst wirklich kritisch. Teile dein Wissen.","Perfekt! Nur 0.1% erreichen das laut iProov-Studie (2025)."];
+  document.getElementById("qmsg").innerHTML=msgs[qs]||msgs[6];
+  const cmps=["Weit unter Studiendurchschnitt (55.5%)","Unter Studiendurchschnitt","Entspricht Studiendurchschnitt","&Uuml;ber Studiendurchschnitt","Deutlich &uuml;ber Studiendurchschnitt","Top 5%","Top 0.1% &mdash; iProov 2025"];
+  document.getElementById("qcmp").innerHTML="Einordnung: "+cmps[qs];
+}
+function qReset(){
+  qs=0;for(let i=0;i<6;i++)qans[i]=null;
+  document.getElementById("qend").style.display="none";
+  document.querySelectorAll(".qsl").forEach(s=>{
+    s.classList.remove("show");
+    s.querySelectorAll(".qopt").forEach(b=>{b.disabled=false;b.classList.remove("ri","wr");});
+    s.querySelectorAll(".qfb").forEach(f=>f.classList.remove("show","ok"));
+    const nb=s.querySelector("[id^=qnb]");if(nb)nb.style.display="none";
+  });
+  document.getElementById("qs0").classList.add("show");
+  document.querySelectorAll(".qpip").forEach((p,i)=>{p.classList.remove("active","done");if(i===0)p.classList.add("active");});
+}
+</script>
+</body>
+</html>
